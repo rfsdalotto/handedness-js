@@ -24,8 +24,6 @@ class Handedness {
             vertical: self.checkIfVertical(self.last_point, position)
         }
 
-        self.updateDebug(touch_trail);
-
         if (touch_trail.vertical === true) {
             self.touches.push(touch_trail);
             self.classify(touch_trail);
@@ -62,11 +60,9 @@ class Handedness {
         var last_config = JSON.parse(JSON.stringify(this.last_classification));
         if (this.last_classification.grade <= 0.5) {
             side = 'left';
-            this.updateDebug(this.last_touch_trail, 'left-handed');
         }
         else {
             side = 'right';
-            this.updateDebug(this.last_touch_trail, 'right-handed');
         }
 
         this.last_classification.handedness = side;
@@ -92,22 +88,6 @@ class Handedness {
 
     getSide() {
         return { classification: this.last_classification, touches: this.touches };
-    }
-
-    updateDebug(touch_trail, prediction) {
-        document.getElementById('debug_info').innerHTML =
-            '<p>start: ' + touch_trail.start.x + ' - ' + touch_trail.start.y + '<p> \
-             <p>end: ' + touch_trail.end.x + ' - ' + touch_trail.end.y + '<p> \
-             <p>vertical? ' + touch_trail.vertical + '<p> \
-             <p>threshold: ' + this.threshold * 100 + '%<p><br>\
-             <h3>prediction: <b>' + (prediction || this.last_prediction) + '</b></h3>';
-
-        if (touch_trail) {
-            this.last_touch_trail = touch_trail;
-        }
-        if (prediction) {
-            this.last_prediction = prediction;
-        }
     }
 }
 
