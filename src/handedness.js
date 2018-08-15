@@ -1,41 +1,40 @@
 class Handedness {
     constructor(changeListener) {
-        window.addEventListener('touchstart', (e) => { this.start(e, this); }, false);
-        window.addEventListener('touchend', (e) => { this.end(e, this); }, false);
+        window.addEventListener('touchstart', (e) => { this.start(e); }, false);
+        window.addEventListener('touchend', (e) => { this.end(e); }, false);
 
         this.last_point;
         this.touches = [];
         this.threshold = .25;
         this.last_touch_trail;
-        this.last_prediction = '';
         this.last_classification = { total: 0, count: 0, grade: 1 };
         this.changeListener = changeListener;
     }
 
-    start(e, self) {
-        self.last_point = new Vector2(e);
+    start(e) {
+        this.last_point = new Vector2(e);
     }
 
-    end(e, self) {
-        var position = new Vector2(e);
-        var touch_trail = {
-            start: self.last_point,
+    end(e) {
+        let position = new Vector2(e);
+        let touch_trail = {
+            start: this.last_point,
             end: position,
-            vertical: self.checkIfVertical(self.last_point, position)
+            vertical: this.checkIfVertical(this.last_point, position)
         }
 
         if (touch_trail.vertical === true) {
-            self.touches.push(touch_trail);
-            self.classify(touch_trail);
+            this.touches.push(touch_trail);
+            this.classify(touch_trail);
         }
     }
 
     checkIfVertical(s, e) {
-        var w = window.innerWidth;
-        var h = window.innerHeight;
+        let w = window.innerWidth;
+        let h = window.innerHeight;
 
-        var _diff = s.diff(e);
-        var t = w * this.threshold;
+        let _diff = s.diff(e);
+        let t = w * this.threshold;
 
         if (_diff.x >= t) {
             return false;
@@ -51,13 +50,12 @@ class Handedness {
     }
 
     classify(touch_trail) {
-        var grade = this.last_classification.total;
         this.last_classification.total += this.classifyTouch(touch_trail.start.getFurther(touch_trail.end));
         this.last_classification.count += 1;
         this.last_classification.grade = this.last_classification.total / this.last_classification.count;
 
-        var side;
-        var last_config = JSON.parse(JSON.stringify(this.last_classification));
+        let side;
+        let last_config = JSON.parse(JSON.stringify(this.last_classification));
         if (this.last_classification.grade <= 0.5) {
             side = 'left';
         }
@@ -128,3 +126,5 @@ class Vector2 {
         return value;
     }
 }
+
+export default Handedness;
