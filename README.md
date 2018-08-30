@@ -1,6 +1,6 @@
 # handedness.js
 
-Experimental JS library with 0 dependencies to predict user handedness (or at least try) using touch events.
+Experimental library to predict user handedness (or at least try) using touch events with 0 dependencies.
 
 - [Use case demo](https://roquef.github.io/handedness/)
 - [Use case demo invision](https://invis.io/E8N5FXJ7JDK)
