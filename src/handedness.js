@@ -1,8 +1,10 @@
 class Handedness {
-    constructor(changeListener) {
+    constructor(options) {
         window.addEventListener('touchstart', (e) => { this.start(e); }, false);
         window.addEventListener('touchend', (e) => { this.end(e); }, false);
 
+        for(let o in options) { this[o] = options[o]; } // change to options object
+        
         this.last_point;
         this.touches = [];
         this.threshold = .25;
