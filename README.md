@@ -6,8 +6,12 @@
 - [Use case demo - swipe - invision](https://invis.io/E8N5FXJ7JDK)
 
 ```
-new Handedness((h) => {
-    console.log(h.last_handedness); // last classification
-    console.log(h.classification.handedness); // actual classification
-});
+        var h = new Handedness({
+            listener: (newH) => {
+                console.log(newH);
+                var body = document.getElementsByTagName('body')[0];
+                body.classList.remove(newH.last_handedness);
+                body.classList.add(newH.classification.handedness);
+            }
+        });
 ```
