@@ -3,18 +3,25 @@ class Handedness {
         window.addEventListener('touchstart', (e) => { this.start(e); }, false);
         window.addEventListener('touchend', (e) => { this.end(e); }, false);
 
-        for(let o in options) { this[o] = options[o]; } // change to options object
+        var default_options = {
+            threshold: .25,
+            minimum_touches: 1,
+            auto_clean: false,
+            clean_time: 5 * 1000,
+        }
+
+        this.options = Object.assign(default_options, options);
         
         this.last_point;
         this.touches = [];
-        this.threshold = .25;
         this.last_touch_trail;
         this.last_classification = { total: 0, count: 0, grade: 1 };
-        this.changeListener = changeListener;
     }
 
     start(e) {
-        this.last_point = new Vector2(e);
+        if(e.target.getAttribute('data-h-ignore') !== 'true') {
+            this.last_point = new Vector2(e);
+        }
     }
 
     end(e) {
@@ -27,7 +34,10 @@ class Handedness {
 
         if (touch_trail.vertical === true) {
             this.touches.push(touch_trail);
-            this.classify(touch_trail);
+
+            if(this.touches.length >= this.options.minimum_touches) {
+                this.classify(touch_trail);
+            }
         }
     }
 
@@ -36,7 +46,7 @@ class Handedness {
         let h = window.innerHeight;
 
         let _diff = s.diff(e);
-        let t = w * this.threshold;
+        let t = w * this.options.threshold;
 
         if (_diff.x >= t) {
             return false;
@@ -74,10 +84,11 @@ class Handedness {
     }
 
     checkAndNotify(old_h, new_h) {
+        console.log(this.options)
         if (old_h !== new_h) {
-            if (this.changeListener) {
+            if (this.options.listener) {
                 try {
-                    this.changeListener({ classification: this.last_classification, touches: this.touches, last_handedness: old_h });
+                    this.options.listener({ classification: this.last_classification, touches: this.touches, last_handedness: old_h });
                 }
                 catch(err){
                     console.error(err);
@@ -88,6 +99,10 @@ class Handedness {
 
     getSide() {
         return { classification: this.last_classification, touches: this.touches };
+    }
+
+    reset() {
+        this.last_classification = { total: 0, count: 0, grade: 1 };
     }
 }
 

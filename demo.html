@@ -278,7 +278,7 @@
 </head>
 
 <body class="right">
-    <div class="button--fixed"></div>
+    <div class="button--fixed" data-h-ignore="true"></div>
     <div class="item">
         <div class="item__content">
             <div class="item_upper-layer swipe-it">
@@ -289,8 +289,8 @@
                 </div>
             </div>
             <div class="item__actions">
-                <div class="item__actions--share"></div>
-                <div class="item__actions--delete"></div>
+                <div class="item__actions--share" data-h-ignore="true"></div>
+                <div class="item__actions--delete" data-h-ignore="true"></div>
             </div>
         </div>
     </div>
@@ -299,11 +299,13 @@
     <script src="swipe-it.js"></script>
     <script src="dist/handedness.js"></script>
     <script>
-        var h = new Handedness(function (newH) {
-            var body = document.getElementsByTagName('body')[0];
-            console.log(newH.classification.handedness);
-            body.classList.remove(newH.last_handedness);
-            body.classList.add(newH.classification.handedness);
+        var h = new Handedness({
+            listener: (newH) => {
+                console.log(newH);
+                var body = document.getElementsByTagName('body')[0];
+                body.classList.remove(newH.last_handedness);
+                body.classList.add(newH.classification.handedness);
+            }
         });
     </script>
 </body>
